@@ -38,6 +38,7 @@ runs/
 /eval/evaluate-old.py
 /eval/eval_pfc.py
 /eval/*cache*/
+/eval/147inf/
 /eval/*generated*/
 /eval/generated_*/
 /eval/results*.json
