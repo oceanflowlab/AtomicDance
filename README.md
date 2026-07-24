@@ -11,7 +11,7 @@ This repository is the official PyTorch implementation of the paper
 **Music-to-Dance Generation via Atomic Movements**.
 
 **Xinhao Cai**, **Yixuan Sun**, **Minghang Zheng**, **Qingchao Chen**,
-**Xin Jin**, **Song-chun Zhu**, and **Yang Liu**
+**Xin Jin**, **Song-Chun Zhu**, and **Yang Liu**
 
 [Paper](https://cxhcmhhh.github.io/AtomicDanceProject/static/pdfs/paper.pdf) | [arXiv](https://arxiv.org/abs/2607.13978) | [Project](https://cxhcmhhh.github.io/AtomicDanceProject/) | [Dataset](https://drive.google.com/file/d/1ETsaetMMWeKV3_E3Lr40BdybAsUAG8WM/view?usp=sharing) | [YouTube](#)
 
