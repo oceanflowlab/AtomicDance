@@ -20,6 +20,53 @@ class PlannerOutput:
     timesteps: torch.Tensor
 
 
+def _square_activation(x: torch.Tensor) -> torch.Tensor:
+    return x * x
+
+
+def _gaussian_activation(x: torch.Tensor) -> torch.Tensor:
+    return torch.exp(-x * x / 2.0)
+
+
+class ParabolicActivation(nn.Module):
+    """Learnable per-channel polynomial activation f(x) = sum_i w_i x^i.
+
+    Degree 2 gives each feed-forward channel its own parabola, following the
+    LifeNNgine finding that band-selective automaton rules become dramatically
+    easier to learn with a parabolic activation than with monotone ones.
+    Initialised near the identity (w1 = 1, other coefficients ~ N(0, 0.01))
+    so training starts in a stable, quasi-linear regime and learns curvature.
+    """
+
+    def __init__(self, channels: int, degree: int = 2) -> None:
+        super().__init__()
+        self.degree = degree
+        coeffs = 0.01 * torch.randn(degree + 1, channels)
+        coeffs[1] += 1.0
+        self.coeffs = nn.Parameter(coeffs)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: [..., channels]; coefficients broadcast over the leading dims
+        out = self.coeffs[0] + self.coeffs[1] * x
+        x_pow = x
+        for i in range(2, self.degree + 1):
+            x_pow = x_pow * x
+            out = out + self.coeffs[i] * x_pow
+        return out
+
+
+def _resolve_activation(name: str, ff_size: int):
+    if name == "gelu":
+        return "gelu"
+    if name == "square":
+        return _square_activation
+    if name == "gaussian":
+        return _gaussian_activation
+    if name == "poly2":
+        return ParabolicActivation(channels=ff_size, degree=2)
+    raise ValueError(f"unknown activation '{name}' (expected gelu/square/gaussian/poly2)")
+
+
 class AtomicPlannerTransformer(nn.Module):
     """Music-conditioned Transformer used as the D3PM reverse model."""
 
@@ -33,6 +80,7 @@ class AtomicPlannerTransformer(nn.Module):
         ff_size: int = 1024,
         dropout: float = 0.1,
         max_seq_len: int = 18000,
+        activation: str = "gelu",
     ) -> None:
         super().__init__()
         self.num_classes = num_atomic_classes + 1
@@ -52,7 +100,7 @@ class AtomicPlannerTransformer(nn.Module):
             nhead=num_heads,
             dim_feedforward=ff_size,
             dropout=dropout,
-            activation="gelu",
+            activation=_resolve_activation(activation, ff_size),
             batch_first=True,
             norm_first=True,
         )

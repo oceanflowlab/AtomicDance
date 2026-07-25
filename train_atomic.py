@@ -70,6 +70,7 @@ def planner_model(args):
         ff_size=args.ff_size,
         dropout=args.dropout,
         max_seq_len=args.seq_len,
+        activation=args.activation,
     )
     return UniformD3PM(model, num_steps=args.diffusion_steps)
 
@@ -334,6 +335,12 @@ def parse_args():
     parser.add_argument("--ff-size", type=int, default=1024)
     parser.add_argument("--dropout", type=float, default=0.1)
     parser.add_argument("--diffusion-steps", type=int, default=100)
+    parser.add_argument(
+        "--activation",
+        choices=("gelu", "poly2", "square", "gaussian"),
+        default="gelu",
+        help="Planner feed-forward activation; poly2 is a learnable per-channel parabola (LifeNNgine-style)",
+    )
     parser.add_argument("--transition-weight", type=float, default=1.0)
     parser.add_argument("--cond-drop-prob", type=float, default=0.25)
     parser.add_argument("--guidance-weight", type=float, default=2.0)

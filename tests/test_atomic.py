@@ -64,6 +64,50 @@ class D3PMTests(unittest.TestCase):
         self.assertEqual(tuple(sampled.shape), (2, 12))
         self.assertTrue(torch.all((sampled >= 0) & (sampled < 5)))
 
+    def _tiny_planner(self, activation, num_layers=1):
+        return AtomicPlannerTransformer(
+            num_atomic_classes=4,
+            music_dim=6,
+            latent_dim=16,
+            num_layers=num_layers,
+            num_heads=4,
+            ff_size=32,
+            dropout=0.0,
+            max_seq_len=12,
+            activation=activation,
+        )
+
+    def test_activation_variants_forward(self):
+        labels = torch.randint(0, 5, (2, 12))
+        music = torch.randn(2, 12, 6)
+        for activation in ("square", "gaussian", "poly2"):
+            diffusion = UniformD3PM(self._tiny_planner(activation), num_steps=4)
+            output = diffusion.training_step(labels, music, timesteps=torch.tensor([0, 3]))
+            self.assertEqual(tuple(output.logits.shape), (2, 12, 5))
+            self.assertTrue(torch.isfinite(output.loss))
+            sampled = diffusion.sample(music, deterministic=True)
+            self.assertEqual(tuple(sampled.shape), (2, 12))
+
+    def test_parabolic_activation_learnable_per_layer(self):
+        diffusion = UniformD3PM(self._tiny_planner("poly2", num_layers=2), num_steps=4)
+        coeffs = {
+            name: param
+            for name, param in diffusion.named_parameters()
+            if name.endswith("activation.coeffs")
+        }
+        self.assertEqual(len(coeffs), 2)  # independent parabola per encoder layer
+        output = diffusion.training_step(
+            torch.randint(0, 5, (2, 12)), torch.randn(2, 12, 6), timesteps=torch.tensor([0, 3])
+        )
+        output.loss.backward()
+        for param in coeffs.values():
+            self.assertIsNotNone(param.grad)
+            self.assertTrue(torch.isfinite(param.grad).all())
+
+    def test_default_activation_keeps_checkpoint_layout(self):
+        state = self._tiny_planner("gelu").state_dict()
+        self.assertFalse(any("activation" in key for key in state))
+
 
 class CompletionTests(unittest.TestCase):
     def test_completion_loss_and_sampling_shapes(self):
