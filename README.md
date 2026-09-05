@@ -5,7 +5,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2607.13978-b31b1b.svg)](https://arxiv.org/abs/2607.13978)
 [![Project Page](https://img.shields.io/badge/Project-Page-blue?style=plastic&logo=githubpages&logoColor=blue)](https://cxhcmhhh.github.io/AtomicDanceProject/)
 [![Dataset](https://img.shields.io/badge/Google_Drive-Storage-dfa12b?style=flat&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1ETsaetMMWeKV3_E3Lr40BdybAsUAG8WM/view?usp=sharing)
-[![YouTube](https://img.shields.io/badge/YouTube-Coming_Soon-red?style=plastic&logo=youtube&logoColor=red)](#)
+[![YouTube](https://img.shields.io/badge/YouTube-Video-red?style=plastic&logo=youtube&logoColor=red)](https://www.youtube.com/watch?v=gFabJjdnhdE)
 
 This repository is the official PyTorch implementation of the paper
 **Music-to-Dance Generation via Atomic Movements**.
@@ -13,7 +13,7 @@ This repository is the official PyTorch implementation of the paper
 **Xinhao Cai**, **Yixuan Sun**, **Minghang Zheng**, **Qingchao Chen**,
 **Xin Jin**, **Song-Chun Zhu**, and **Yang Liu**
 
-[Paper](https://cxhcmhhh.github.io/AtomicDanceProject/static/pdfs/paper.pdf) | [arXiv](https://arxiv.org/abs/2607.13978) | [Project](https://cxhcmhhh.github.io/AtomicDanceProject/) | [Dataset](https://drive.google.com/file/d/1ETsaetMMWeKV3_E3Lr40BdybAsUAG8WM/view?usp=sharing) | [YouTube](#)
+[Paper](https://cxhcmhhh.github.io/AtomicDanceProject/static/pdfs/paper.pdf) | [arXiv](https://arxiv.org/abs/2607.13978) | [Project](https://cxhcmhhh.github.io/AtomicDanceProject/) | [Dataset](https://drive.google.com/file/d/1ETsaetMMWeKV3_E3Lr40BdybAsUAG8WM/view?usp=sharing) | [YouTube](https://www.youtube.com/watch?v=gFabJjdnhdE)
 
 Music-driven dance generation should produce motion that is rhythmically
 synchronized with music while preserving coherent choreographic structure.
